@@ -23,7 +23,7 @@ def get_plaintext() -> bytes:
         return Path(INPUT_FILE).read_bytes()
     if MESSAGE_ENV is not None:
         return MESSAGE_ENV.encode("utf-8")
-    return input("Nhập bản tin cần gửi: ").encode("utf-8")
+    return input("Nhập bản tin: ").encode("utf-8")
 
 
 def send_packet(host: str, port: int, packet: bytes) -> None:
@@ -34,10 +34,9 @@ def send_packet(host: str, port: int, packet: bytes) -> None:
             sock.connect((host, port))
             sock.sendall(packet)
     except ConnectionRefusedError:
-        print(f"[!] Lỗi: Không thể kết nối tới {host}:{port}. Hãy chắc chắn receiver.py đang chạy.")
+        print(f"[!] Lỗi: Không thể kết nối tới {host}:{port}.")
         exit(1)
-    except Exception as e:
-        print(f"[!] Lỗi không xác định khi gửi tới port {port}: {e}")
+    except Exception:
         exit(1)
 
 
@@ -46,39 +45,36 @@ def main() -> None:
     plaintext = get_plaintext()
     
     # 2. Mã hóa AES-CBC
-    # encrypt_aes_cbc trả về (key, iv, ciphertext)
     key, iv, ciphertext = encrypt_aes_cbc(plaintext, key_size=AES_KEY_SIZE)
 
-    # 3. Đóng gói gói tin theo giao thức đã định nghĩa
+    # 3. Đóng gói gói tin
     key_packet = build_key_packet(key, iv)
     data_packet = build_data_packet(ciphertext)
 
     # 4. Gửi qua 2 kênh riêng biệt
-    print(f"[...] Đang gửi dữ liệu tới Server {SERVER_IP}...")
     send_packet(SERVER_IP, KEY_PORT, key_packet)
     send_packet(SERVER_IP, DATA_PORT, data_packet)
 
-    # 5. Ghi log và hiển thị kết quả
+    # 5. Hiển thị kết quả THEO ĐÚNG ĐỊNH DẠNG TEST
     lines = [
-        "==========================================",
-        "          SENDER SECURITY LOG             ",
-        "==========================================",
-        f"[+] Trạng thái: Đã gửi thành công.",
-        f"[+] Server: {SERVER_IP}",
-        f"[+] Key Port (Kênh khóa): {KEY_PORT}",
-        f"[+] Data Port (Kênh dữ liệu): {DATA_PORT}",
-        f"[+] AES Key Size: {len(key) * 8} bits",
-        f"[+] Key (hex): {key.hex()}",
-        f"[+] IV (hex): {iv.hex()}",
-        f"[+] Plaintext Length: {len(plaintext)} bytes",
-        f"[+] Ciphertext Length: {len(ciphertext)} bytes",
-        f"[+] Ciphertext (hex): {ciphertext.hex()[:50]}...", # Chỉ hiện một phần để dễ nhìn
+        "[+] Đã tạo AES key và IV.",
+        "[+] Đã gửi key/IV qua kênh khóa.",
+        "[+] Đã gửi ciphertext qua kênh dữ liệu.",
+        f"Server: {SERVER_IP}",
+        f"Key port: {KEY_PORT}",
+        f"Data port: {DATA_PORT}",
+        f"AES key size: {len(key)} bytes",
+        f"Key: {key.hex()}",
+        f"IV: {iv.hex()}",
+        f"Plaintext length: {len(plaintext)} bytes",
+        f"Ciphertext length: {len(ciphertext)} bytes",
+        f"Ciphertext: {ciphertext.hex()}",
     ]
 
     for line in lines:
         print(line)
 
-    # Tự động tạo thư mục logs nếu chưa có
+    # 6. Ghi log tự động
     if LOG_FILE:
         log_path = Path(LOG_FILE)
         log_path.parent.mkdir(parents=True, exist_ok=True)
