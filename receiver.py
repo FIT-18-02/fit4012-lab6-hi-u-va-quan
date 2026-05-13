@@ -32,10 +32,10 @@ def run_receiver():
 
         key_server.bind((RECEIVER_HOST, KEY_PORT))
         data_server.bind((RECEIVER_HOST, DATA_PORT))
-
+//qhieu
         key_server.listen(1)
         data_server.listen(1)
-#qh
+    
         print(f"[*] Chờ kết nối Kênh Khóa (Cổng {KEY_PORT})...")
         print(f"[*] Chờ kết nối Kênh Dữ liệu (Cổng {DATA_PORT})...")
 
