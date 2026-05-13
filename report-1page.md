@@ -58,7 +58,7 @@ SERVER_IP=127.0.0.1 KEY_PORT=6001 DATA_PORT=6000 MESSAGE="Xin chao FIT4012" pyth
 
 Ngô Văn Hiếu : Tóm tắt kết quả chạy, log minh chứng, output nhận được và các test quan trọng.
 Hệ thống Sender và Receiver hoạt động ổn định trên localhost thông qua giao thức TCP socket. Sender thực hiện mã hóa plaintext bằng AES-CBC với khóa AES và IV được sinh ngẫu nhiên, sau đó gửi key packet và data packet qua hai cổng riêng biệt. Receiver nhận đúng packet, parse dữ liệu thành công và giải mã lại chính xác nội dung ban đầu.
-
+// qh
 Trong quá trình kiểm thử:
 
 Chương trình gửi và nhận thành công với nhiều dữ liệu có độ dài khác nhau.
