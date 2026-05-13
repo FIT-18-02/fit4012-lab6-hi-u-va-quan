@@ -3,8 +3,10 @@ import os
 import struct
 from typing import Tuple
 from Crypto.Cipher import AES
-#qh
-# Các hằng số cấu hình hệ thống
+
+# ==================================================
+# Cấu hình hệ thống
+# ==================================================
 BLOCK_SIZE = 16
 LENGTH_HEADER_SIZE = 4
 KEY_LENGTH_HEADER_SIZE = 4
@@ -38,16 +40,20 @@ def generate_key_iv(key_size: int = 16) -> Tuple[bytes, bytes]:
     return os.urandom(key_size), os.urandom(IV_SIZE)
 
 def validate_key_iv(key: bytes, iv: bytes) -> None:
-    """Kiểm tra độ dài chuẩn của Key và IV trước khi thực hiện mã hóa/giải mã."""
+    """Kiểm tra độ dài chuẩn của Key và IV."""
     if len(key) not in VALID_KEY_SIZES:
         raise ValueError(f"AES key phải dài 16 hoặc 32 byte (đang nhận: {len(key)}).")
     if len(iv) != IV_SIZE:
         raise ValueError(f"IV phải dài đúng 16 byte (đang nhận: {len(iv)}).")
 
+# ==================================================
+# Các hàm Mã hóa / Giải mã chính
+# ==================================================
+
 def encrypt_aes_cbc(
     plain: bytes,
-    key: bytes | None = None,
-    iv: bytes | None = None,
+    key: bytes = None,
+    iv: bytes = None,
     key_size: int = 16,
 ) -> Tuple[bytes, bytes, bytes]:
     """Mã hóa bản tin với AES-CBC và PKCS#7 padding."""
@@ -70,12 +76,17 @@ def decrypt_aes_cbc(key: bytes, iv: bytes, cipher_bytes: bytes) -> bytes:
         raise ValueError("Độ dài Ciphertext không phải bội số của 16 (Sai block).")
 
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(cipher_bytes))
+    decrypted_data = cipher.decrypt(cipher_bytes)
+    return unpad(decrypted_data)
+
+# ==================================================
+# Các hàm hỗ trợ Socket (Đóng gói & Nhận tin)
+# ==================================================
 
 def build_key_packet(key: bytes, iv: bytes) -> bytes:
     """Đóng gói kênh khóa: [Độ dài Key(4B)] + [Key] + [IV(16B)]."""
     validate_key_iv(key, iv)
-    # Dùng '!I' để đảm bảo byte order là Big-endian (Network order)
+    # '!I': Big-endian, 4 byte unsigned int
     return struct.pack("!I", len(key)) + key + iv
 
 def parse_key_packet(packet: bytes) -> Tuple[bytes, bytes]:
@@ -84,12 +95,13 @@ def parse_key_packet(packet: bytes) -> Tuple[bytes, bytes]:
         raise ValueError("Gói tin khóa quá ngắn.")
 
     key_len = struct.unpack("!I", packet[:KEY_LENGTH_HEADER_SIZE])[0]
+    
     if key_len not in VALID_KEY_SIZES:
         raise ValueError(f"Độ dài key {key_len} không hợp lệ.")
 
     expected_len = KEY_LENGTH_HEADER_SIZE + key_len + IV_SIZE
     if len(packet) != expected_len:
-        raise ValueError("Độ dài thực tế của gói khóa không khớp với Header.")
+        raise ValueError(f"Độ dài gói ({len(packet)}) không khớp với Header ({expected_len}).")
 
     key = packet[KEY_LENGTH_HEADER_SIZE : KEY_LENGTH_HEADER_SIZE + key_len]
     iv = packet[KEY_LENGTH_HEADER_SIZE + key_len :]
@@ -105,17 +117,19 @@ def parse_length_header(header: bytes) -> int:
     """Đọc 4 byte header để lấy độ dài phần dữ liệu phía sau."""
     if len(header) != LENGTH_HEADER_SIZE:
         raise ValueError("Header độ dài phải đủ 4 byte.")
-    length = struct.unpack("!I", header)[0]
-    return length
+    return struct.unpack("!I", header)[0]
 
 def recv_exact(conn, n: int) -> bytes:
-    """Đảm bảo nhận đúng và đủ n bytes từ kết nối TCP."""
+    """Đảm bảo nhận đúng và đủ n bytes từ TCP stream."""
     chunks = []
     received = 0
     while received < n:
-        chunk = conn.recv(min(n - received, 4096))
-        if not chunk:
-            raise ConnectionError("Kết nối bị ngắt đột ngột trước khi nhận đủ dữ liệu.")
-        chunks.append(chunk)
-        received += len(chunk)
+        try:
+            chunk = conn.recv(min(n - received, 4096))
+            if not chunk:
+                raise ConnectionError("Kết nối bị ngắt đột ngột trước khi nhận đủ dữ liệu.")
+            chunks.append(chunk)
+            received += len(chunk)
+        except Exception as e:
+            raise ConnectionError(f"Lỗi khi đang nhận dữ liệu: {e}")
     return b"".join(chunks)
