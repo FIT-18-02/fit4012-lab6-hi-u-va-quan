@@ -35,7 +35,7 @@ def run_receiver():
 
         key_server.listen(1)
         data_server.listen(1)
-//qh
+#qh
         print(f"[*] Chờ kết nối Kênh Khóa (Cổng {KEY_PORT})...")
         print(f"[*] Chờ kết nối Kênh Dữ liệu (Cổng {DATA_PORT})...")
 
@@ -93,7 +93,7 @@ def run_receiver():
             # Dùng mode "a" để append log thay vì ghi đè nếu muốn lưu lịch sử
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(log_content)
-//qh
+#qh
     except Exception as e:
         print(f"[!] Lỗi hệ thống: {e}")
 
