@@ -1,33 +1,26 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pytest
 
-from aes_socket_utils import build_key_packet, parse_key_packet
+from aes_socket_utils import build_data_packet, parse_length_header
 
 
-def test_key_channel_contract_aes_128():
-    key = b"a" * 16
-    iv = b"b" * 16
-    packet = build_key_packet(key, iv)
-
-    assert packet[:4] == (16).to_bytes(4, "big")
-    assert packet[4:20] == key
-    assert packet[20:36] == iv
-
-    parsed_key, parsed_iv = parse_key_packet(packet)
-    assert parsed_key == key
-    assert parsed_iv == iv
-
-
-def test_key_channel_contract_aes_256():
-    key = b"a" * 32
-    iv = b"b" * 16
-    packet = build_key_packet(key, iv)
+def test_data_channel_contract():
+    ciphertext = b"x" * 32
+    packet = build_data_packet(ciphertext)
 
     assert packet[:4] == (32).to_bytes(4, "big")
-    parsed_key, parsed_iv = parse_key_packet(packet)
-    assert parsed_key == key
-    assert parsed_iv == iv
+    assert parse_length_header(packet[:4]) == 32
+    assert packet[4:] == ciphertext
 
 
-def test_invalid_key_size_should_fail():
+def test_empty_ciphertext_should_fail():
     with pytest.raises(ValueError):
-        build_key_packet(b"short", b"b" * 16)
+        build_data_packet(b"")
+
+
+def test_bad_length_header_should_fail():
+    with pytest.raises(ValueError):
+        parse_length_header(b"\x00\x01")
