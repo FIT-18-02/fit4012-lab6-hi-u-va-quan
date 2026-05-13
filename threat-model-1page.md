@@ -14,7 +14,7 @@ Các tài sản quan trọng cần bảo vệ bao gồm:
 - **Dữ liệu Log**: Các file ghi chép tiến trình hoạt động của hệ thống trong thư mục `logs/`.
 
 ## Attacker model
-
+//qh
 Đối tượng tấn công giả định trong bài Lab này là:
 - Kẻ tấn công có khả năng nghe lén (Eavesdropping) trên mạng nội bộ (LAN) để bắt các gói tin TCP.
 - Có khả năng can thiệp, sửa đổi (Tampering) gói tin bản mã trên đường truyền.
