@@ -4,5 +4,5 @@ pycryptodome>=3.20.0
 # Công cụ chạy unit test tự động
 pytest>=8.0.0
 
-# Thư viện hỗ trợ quản lý biến môi trường (nếu Quân muốn dùng file .env)
+# Thư viện hỗ trợ quản lý biến môi trường
 python-dotenv>=1.0.1
