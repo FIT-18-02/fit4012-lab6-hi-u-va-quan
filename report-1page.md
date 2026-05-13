@@ -13,8 +13,8 @@ Phạm Anh Quân : Bài lab nhằm xây dựng hệ thống gửi và nhận d�
 
 | Vai trò | Phụ trách chính |
 |---------|----------------|
-| **Sender** (mã hóa, key channel, data channel) | TẠ CÔNG SƠN |
-| **Receiver** (giải mã, nhận packet, xử lý lỗi) | NGUYỄN VŨ PHƯƠNG |
+| **Sender** (mã hóa, key channel, data channel) | Ngô Văn Hiếu |
+| **Receiver** (giải mã, nhận packet, xử lý lỗi) | Phạm Anh Quân |
 | **Test cases** (pytest, wrong key, tamper) | Cả hai |
 | **Log & Minh chứng** | Ngô Văn Hiếu |
 | **Threat model** | Phạm Anh Quân |
