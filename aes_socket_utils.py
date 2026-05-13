@@ -3,7 +3,7 @@ import os
 import struct
 from typing import Tuple
 from Crypto.Cipher import AES
-
+#qh
 # Các hằng số cấu hình hệ thống
 BLOCK_SIZE = 16
 LENGTH_HEADER_SIZE = 4
