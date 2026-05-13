@@ -6,7 +6,7 @@
 - Thành viên 2: Ngô Văn Hiếu - MSSV: 1871020234
 
 ## Assets
-
+//qh
 Các tài sản quan trọng cần bảo vệ bao gồm:
 - **Bản rõ (Plaintext)**: Nội dung thông tin gốc chứa trong file `sample_input.txt` hoặc biến môi trường.
 - **Khóa AES (Key) & IV**: Thành phần then chốt để thực hiện mã hóa và giải mã AES-128.
