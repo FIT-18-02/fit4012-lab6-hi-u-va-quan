@@ -54,7 +54,7 @@ def run_receiver():
             header_data = recv_exact(conn_data, 4)
             ciphertext_len = parse_length_header(header_data)
             ciphertext = recv_exact(conn_data, ciphertext_len)
-        print(f"[OK] Đã nhận bản mã ({ciphertext_len} bytes).")
+        print(f"[OK] Đã nhận bản mã ({ciphertext_len} bytes).") #hieuquan
 
         # 3. Giải mã - QUAN TRỌNG: Phải in đúng cụm từ "[+] Bản tin gốc:"
         plaintext_bytes = decrypt_aes_cbc(key, iv, ciphertext)
@@ -69,7 +69,7 @@ def run_receiver():
             log_path.parent.mkdir(parents=True, exist_ok=True)
             log_content = f"[+] Bản tin gốc: {plaintext_str}\n"
             with open(log_path, "a", encoding="utf-8") as f:
-                f.write(log_content)
+                f.write(log_content) #hieuquan
 #qh
     except Exception as e:
         print(f"[!] Lỗi: {e}")
