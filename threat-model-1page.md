@@ -29,7 +29,7 @@ Hệ thống hiện tại đối mặt với các mối đe dọa cụ thể sau
 - **Lộ thông tin qua Log (Log leakage)**: Nếu các hàm hiển thị ghi trực tiếp giá trị Key/IV vào log file mà không được bảo vệ, kẻ tấn công có thể lấy được khóa từ lịch sử hệ thống.
 
 ## Mitigations
-
+//quanhieu
 Các biện pháp nhằm giảm thiểu rủi ro cho hệ thống:
 - **Mã hóa kênh truyền**: Trong thực tế, cần sử dụng giao thức TLS/SSL để mã hóa toàn bộ luồng dữ liệu socket.
 - **Trao đổi khóa an toàn**: Thay vì gửi Key/IV trực tiếp, cần sử dụng RSA (mã hóa bất đối xứng) hoặc Diffie-Hellman để trao đổi khóa an toàn.
