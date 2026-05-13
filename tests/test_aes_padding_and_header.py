@@ -69,3 +69,4 @@ def test_parse_invalid_length_header():
     """Kiểm tra xử lý lỗi khi header không đủ 4 bytes."""
     with pytest.raises(ValueError):
         parse_length_header(b"\x00\x00\x01") # Chỉ có 3 bytes
+        #qh
